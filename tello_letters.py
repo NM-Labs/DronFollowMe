@@ -81,6 +81,7 @@ modelo_letras.load_weights("models/letras.h5")
 modelo_letras.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) #compilar el modelo con el optimizador correcto - adam
 
 word = ""
+i = 0
 
 def getLetter(w, h, points):
     global modelo_letras
@@ -209,7 +210,7 @@ def startVideo():
 
         frame = cv2.putText(frame, word, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (80,127,255) , 2, cv2.LINE_AA)
 
-        cv2.imshow('AIR NOTABILITY WITH ML', frame) #muestra el marco
+        cv2.imshow('Escribir en el aire - Drone', frame) #muestra el marco
         # cv2.imshow("Myresultado", img)
 
         #pulsación de tecla
