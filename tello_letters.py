@@ -68,15 +68,14 @@ dicc = {'A': [arriba,derecha_medio,abajo,arriba_medio,izquierda_medio],
 'Z': [derecha,abajo,derecha]}
 
 
-# K.set_image_dim_ordering('th') #ajustando profundidad, input_depth, filas, columnas para la red convolucional
 
 #Empezar cargando el modelo de red neuronal  - modelo de aprendizaje automatico (Machine learning)
-json_file = open('models/letras.json', 'r')
+json_file = open('Entrenamientos/Modelos entrenados/letras.json', 'r')
 json_string = json_file.read()
 json_file.close()
 modelo_letras = model_from_json(json_string)#cargar la arquitectura
-# Cargar pesos en los nuevos modelos
-modelo_letras.load_weights("models/letras.h5")
+# Cargar pesos 
+modelo_letras.load_weights("Entrenamientos/Modelos entrenados//letras.h5")
 
 modelo_letras.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) #compilar el modelo con el optimizador correcto - adam
 
