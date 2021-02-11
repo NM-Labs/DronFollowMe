@@ -5,8 +5,3 @@ Elaborado por:
 Natalia Patiño, Github: [@Natalia-SP](https://github.com/Natalia-SP)
 
 Mario Rosas, Github: [@Mariuki](https://github.com/Mariuki)
-<<<<<<< HEAD
-
-Tell
-=======
->>>>>>> 169ac9e5bd147702c0bdc95ee164e6eefbbfa10a
