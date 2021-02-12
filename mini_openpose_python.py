@@ -113,7 +113,7 @@ def main():
         while True:
                 counter += 1
                 # ret,img = stream.read()
-                leer_frame = dron.get_leer_frame()
+                leer_frame = dron.get_frame_read()
                 img = leer_frame.frame
                 # cv2.imwrite('D:/Escritorio/Dron/DronTodo/images/openimage{}.jpg'.format(counter),img)
                 # Output keypoints and the image with the human skeleton blended on it

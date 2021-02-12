@@ -74,7 +74,7 @@ json_file = open('Entrenamientos/Modelos entrenados/letras.json', 'r')
 json_string = json_file.read()
 json_file.close()
 modelo_letras = model_from_json(json_string)#cargar la arquitectura
-# Cargar pesos 
+# Cargar pesos
 modelo_letras.load_weights("Entrenamientos/Modelos entrenados//letras.h5")
 
 modelo_letras.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy']) #compilar el modelo con el optimizador correcto - adam
@@ -153,7 +153,7 @@ def startVideo():
     c = 0
 
     while True: #mantener una transmisión en vivo
-        leer_frame = dron.get_leer_frame() #obtener el cuadro actual
+        leer_frame = dron.get_frame_read() #obtener el cuadro actual
         frame = leer_frame.frame
         img = cv2.resize(frame, (width, height))
         resultado = frame.copy() #conseguir una copia del cuadro
@@ -258,7 +258,7 @@ print(dron.get_battery())
 dron.streamoff()
 dron.streamon()
 
-dron.takeoff()
+# dron.takeoff()
 # cap = cv2.VideoCapture(0) #iniciar una transmisión en vivo
 startVideo()
-dron.land()
+# dron.land()
