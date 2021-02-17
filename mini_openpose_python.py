@@ -13,6 +13,13 @@ from collections import namedtuple
 # from FPS import FPS
 from matplotlib import pyplot as plt
 import time
+from math import pi, atan2, degrees, sqrt
+
+# from simple_pid import PID
+# from  multiprocessing import Process, Pipe, sharedctypes
+# from SoundPlayer import SoundPlayer, Tone
+# import logging
+# import re
 
 ######################################################################
 width = 320  # ANCHO DE LA IMAGEN
@@ -251,47 +258,47 @@ color_middle = (0,255,255)
 color_face = (255,255,255)
 
 
-pairs_head = [
-    Pair("Nose", "REye", color_right_side),
-    Pair("Nose", "LEye", color_left_side),
-    Pair("REye", "REar", color_right_side),
-    Pair("LEye", "LEar", color_left_side)
-]
-
-pairs_upper_limbs = [
-    Pair("Neck", "RShoulder", color_right_side),
-    Pair("RShoulder", "RElbow", color_right_side),
-    Pair("RElbow", "RWrist", color_right_side),
-    Pair("Neck", "LShoulder", color_left_side),
-    Pair("LShoulder", "LElbow", color_left_side),
-    Pair("LElbow", "LWrist", color_left_side)
-]
-
-pairs_lower_limbs = [
-    Pair("MidHip", "RHip", color_right_side),
-    Pair("RHip", "RKnee", color_right_side),
-    Pair("RKnee", "RAnkle", color_right_side),
-    Pair("RAnkle", "RHeel", color_right_side),
-    Pair("MidHip", "LHip", color_left_side),
-    Pair("LHip", "LKnee", color_left_side),
-    Pair("LKnee", "LAnkle", color_left_side),
-    Pair("LAnkle", "LHeel", color_left_side)
-]
-
-pairs_spine = [
-    Pair("Nose", "Neck", color_middle),
-    Pair("Neck", "MidHip", color_middle)
-]
-
-pairs_feet = [
-    Pair("RAnkle", "RBigToe", color_right_side),
-    Pair("RAnkle", "RHeel", color_right_side),
-    Pair("LAnkle", "LBigToe", color_left_side),
-    Pair("LAnkle", "LHeel", color_left_side)
-]
-
-
-pairs_body = pairs_head + pairs_upper_limbs + pairs_lower_limbs + pairs_spine + pairs_feet
+# pairs_head = [
+#     Pair("Nose", "REye", color_right_side),
+#     Pair("Nose", "LEye", color_left_side),
+#     Pair("REye", "REar", color_right_side),
+#     Pair("LEye", "LEar", color_left_side)
+# ]
+#
+# pairs_upper_limbs = [
+#     Pair("Neck", "RShoulder", color_right_side),
+#     Pair("RShoulder", "RElbow", color_right_side),
+#     Pair("RElbow", "RWrist", color_right_side),
+#     Pair("Neck", "LShoulder", color_left_side),
+#     Pair("LShoulder", "LElbow", color_left_side),
+#     Pair("LElbow", "LWrist", color_left_side)
+# ]
+#
+# pairs_lower_limbs = [
+#     Pair("MidHip", "RHip", color_right_side),
+#     Pair("RHip", "RKnee", color_right_side),
+#     Pair("RKnee", "RAnkle", color_right_side),
+#     Pair("RAnkle", "RHeel", color_right_side),
+#     Pair("MidHip", "LHip", color_left_side),
+#     Pair("LHip", "LKnee", color_left_side),
+#     Pair("LKnee", "LAnkle", color_left_side),
+#     Pair("LAnkle", "LHeel", color_left_side)
+# ]
+#
+# pairs_spine = [
+#     Pair("Nose", "Neck", color_middle),
+#     Pair("Neck", "MidHip", color_middle)
+# ]
+#
+# pairs_feet = [
+#     Pair("RAnkle", "RBigToe", color_right_side),
+#     Pair("RAnkle", "RHeel", color_right_side),
+#     Pair("LAnkle", "LBigToe", color_left_side),
+#     Pair("LAnkle", "LHeel", color_left_side)
+# ]
+#
+#
+# pairs_body = pairs_head + pairs_upper_limbs + pairs_lower_limbs + pairs_spine + pairs_feet
 
 face_kp_id_to_name = {}
 for i in range(17):
@@ -313,22 +320,22 @@ for i in range(8):
 
 face_kp_name_to_id = {v: k for k, v in face_kp_id_to_name.items()}
 
-pairs_jaw = [ Pair(f"Jaw{i+1}", f"Jaw{i+2}", color_face) for i in range(16)]
-pairs_nose = [ Pair(f"Nose{i+1}", f"Nose{i+2}", color_face) for i in range(3)] + [ Pair(f"Nose{i+1}", f"Nose{i+2}", color_face) for i in range(4,8)]
-
-pairs_left_eye = [ Pair(f"LEye{i+1}", f"LEye{i+2}", color_face) for i in range(5)] + [Pair("LEye6","LEye1",color_face)]
-pairs_right_eye = [ Pair(f"REye{i+1}", f"REye{i+2}", color_face) for i in range(5)] + [Pair("REye6","REye1",color_face)]
-pairs_eyes = pairs_left_eye + pairs_right_eye
-
-pairs_left_eyebrow = [ Pair(f"LEyebrow{i+1}", f"LEyebrow{i+2}", color_face) for i in range(4)]
-pairs_right_eyebrow = [ Pair(f"REyebrow{i+1}", f"REyebrow{i+2}", color_face) for i in range(4)]
-pairs_eyesbrow = pairs_left_eyebrow + pairs_right_eyebrow
-
-pairs_outer_lips = [ Pair(f"OuterLips{i+1}", f"OuterLips{i+2}", color_face) for i in range(11)] + [Pair("OuterLips12","OuterLips1",color_face)]
-pairs_inner_lips = [ Pair(f"InnerLips{i+1}", f"InnerLips{i+2}", color_face) for i in range(7)] + [Pair("InnerLips8","InnerLips1",color_face)]
-pairs_mouth = pairs_outer_lips + pairs_inner_lips
-
-pairs_face = pairs_jaw + pairs_nose + pairs_eyes + pairs_eyesbrow + pairs_mouth
+# pairs_jaw = [ Pair(f"Jaw{i+1}", f"Jaw{i+2}", color_face) for i in range(16)]
+# pairs_nose = [ Pair(f"Nose{i+1}", f"Nose{i+2}", color_face) for i in range(3)] + [ Pair(f"Nose{i+1}", f"Nose{i+2}", color_face) for i in range(4,8)]
+#
+# pairs_left_eye = [ Pair(f"LEye{i+1}", f"LEye{i+2}", color_face) for i in range(5)] + [Pair("LEye6","LEye1",color_face)]
+# pairs_right_eye = [ Pair(f"REye{i+1}", f"REye{i+2}", color_face) for i in range(5)] + [Pair("REye6","REye1",color_face)]
+# pairs_eyes = pairs_left_eye + pairs_right_eye
+#
+# pairs_left_eyebrow = [ Pair(f"LEyebrow{i+1}", f"LEyebrow{i+2}", color_face) for i in range(4)]
+# pairs_right_eyebrow = [ Pair(f"REyebrow{i+1}", f"REyebrow{i+2}", color_face) for i in range(4)]
+# pairs_eyesbrow = pairs_left_eyebrow + pairs_right_eyebrow
+#
+# pairs_outer_lips = [ Pair(f"OuterLips{i+1}", f"OuterLips{i+2}", color_face) for i in range(11)] + [Pair("OuterLips12","OuterLips1",color_face)]
+# pairs_inner_lips = [ Pair(f"InnerLips{i+1}", f"InnerLips{i+2}", color_face) for i in range(7)] + [Pair("InnerLips8","InnerLips1",color_face)]
+# pairs_mouth = pairs_outer_lips + pairs_inner_lips
+#
+# pairs_face = pairs_jaw + pairs_nose + pairs_eyes + pairs_eyesbrow + pairs_mouth
 
 class OP:
     @staticmethod
@@ -354,7 +361,7 @@ class OP:
             """
             return np.linalg.norm(np.array(p1)-np.array(p2))
 
-    def __init__(self, number_people_max=-1, min_size=-1, openpose_rendering=False, face_detection=False, frt=0.4, hand_detection=False, debug=False):
+    def __init__(self,datumin,number_people_max=-1, min_size=-1, openpose_rendering=False, face_detection=False, frt=0.4, hand_detection=False, debug=False):
         """
         openpose_rendering : if True, rendering is made by original Openpose library. Otherwise rendering is to the
         responsability of the user (~0.2 fps faster)
@@ -365,6 +372,7 @@ class OP:
         self.face_detection = face_detection
         self.hand_detection = hand_detection
         self.frt = frt
+        self.datumin = datumin
 
         params = dict()
         params["model_folder"] = dir_path + "/../../../models/"
@@ -424,62 +432,63 @@ class OP:
 
         return self.nb_persons,self.body_kps, self.face_kps
 
-    def draw_pairs_person(self, frame, kps, kp_name_to_id, pairs, person_idx=0, thickness=3, color=None):
-        """
-            Draw on 'frame' pairs of keypoints
-        """
-        person = kps[person_idx]
-        for pair in pairs:
-            p1_x,p1_y,p1_conf = person[kp_name_to_id[pair.p1]]
-            p2_x,p2_y,p2_conf = person[kp_name_to_id[pair.p2]]
-            if p1_conf != 0 and p2_conf != 0:
-                col = color if color else pair.color
-                cv2.line(frame, (p1_x, p1_y), (p2_x, p2_y), col, thickness)
+    # def draw_pairs_person(self, frame, kps, kp_name_to_id, pairs, person_idx=0, thickness=3, color=None):
+    #     """
+    #         Draw on 'frame' pairs of keypoints
+    #     """
+    #     person = kps[person_idx]
+    #     for pair in pairs:
+    #         p1_x,p1_y,p1_conf = person[kp_name_to_id[pair.p1]]
+    #         p2_x,p2_y,p2_conf = person[kp_name_to_id[pair.p2]]
+    #         if p1_conf != 0 and p2_conf != 0:
+    #             col = color if color else pair.color
+    #             cv2.line(frame, (p1_x, p1_y), (p2_x, p2_y), col, thickness)
 
-    def draw_pairs(self, frame, kps, kp_name_to_id, pairs, thickness=3, color=None):
-        """
-            Draw on 'frame' pairs of keypoints
-        """
-        for person_idx in range(self.nb_persons):
-            self.draw_pairs_person(frame, kps, kp_name_to_id, pairs, person_idx, thickness=thickness, color=color)
-
-
-    def draw_body(self, frame, pairs=pairs_body, thickness=3, color=None):
-        """
-            Draw on 'frame' pairs of keypoints
-        """
-        self.draw_pairs(frame, self.body_kps, body_kp_name_to_id, pairs, thickness, color)
-
-    def draw_face(self, frame, pairs=pairs_face, thickness=2, color=None):
-        """
-            Draw on 'frame' pairs of keypoints
-        """
-        self.draw_pairs(frame, self.face_kps, face_kp_name_to_id, pairs, thickness, color)
-
-    def draw_eyes_person (self, frame, person_idx=0):
-        eyes_status = self.check_eyes(person_idx=person_idx)
-        if eyes_status in [1,3]:
-            color = (0,200,230)
-        else:
-            color = (230,230,0)
-        self.draw_pairs_person(frame,self.face_kps,face_kp_name_to_id,pairs_right_eye,person_idx,2,color)
-        if eyes_status in [2,3]:
-            color = (0,200,230)
-        else:
-            color = (230,230,0)
-        self.draw_pairs_person(frame,self.face_kps,face_kp_name_to_id,pairs_left_eye,person_idx,2,color)
-
-
-    def draw_eyes (self, frame):
-        for person_idx in range(self.nb_persons):
-            self.draw_eyes_person(frame, person_idx)
+    # def draw_pairs(self, frame, kps, kp_name_to_id, pairs, thickness=3, color=None):
+    #     """
+    #         Draw on 'frame' pairs of keypoints
+    #     """
+    #     for person_idx in range(self.nb_persons):
+    #         self.draw_pairs_person(frame, kps, kp_name_to_id, pairs, person_idx, thickness=thickness, color=color)
+    #
+    #
+    # def draw_body(self, frame, pairs=pairs_body, thickness=3, color=None):
+    #     """
+    #         Draw on 'frame' pairs of keypoints
+    #     """
+    #     self.draw_pairs(frame, self.body_kps, body_kp_name_to_id, pairs, thickness, color)
+    #
+    # def draw_face(self, frame, pairs=pairs_face, thickness=2, color=None):
+    #     """
+    #         Draw on 'frame' pairs of keypoints
+    #     """
+    #     self.draw_pairs(frame, self.face_kps, face_kp_name_to_id, pairs, thickness, color)
+    #
+    # def draw_eyes_person (self, frame, person_idx=0):
+    #     eyes_status = self.check_eyes(person_idx=person_idx)
+    #     if eyes_status in [1,3]:
+    #         color = (0,200,230)
+    #     else:
+    #         color = (230,230,0)
+    #     self.draw_pairs_person(frame,self.face_kps,face_kp_name_to_id,pairs_right_eye,person_idx,2,color)
+    #     if eyes_status in [2,3]:
+    #         color = (0,200,230)
+    #     else:
+    #         color = (230,230,0)
+    #     self.draw_pairs_person(frame,self.face_kps,face_kp_name_to_id,pairs_left_eye,person_idx,2,color)
+    #
+    #
+    # def draw_eyes (self, frame):
+    #     for person_idx in range(self.nb_persons):
+    #         self.draw_eyes_person(frame, person_idx)
 
     def get_body_kp(self, kp_name="Neck", person_idx=0):
         """
             Return the coordinates of a keypoint named 'kp_name' of the person of index 'person_idx' (from 0), or None if keypoint not detected
         """
         try:
-            kps = self.datum.poseKeypoints[person_idx]
+            # kps = self.datum.poseKeypoints[person_idx]
+            kps = self.datumin.poseKeypoints[person_idx]
         except:
             print(f"get_body_kp: invalid person_idx '{person_idx}'")
             return None
@@ -585,56 +594,24 @@ class OP:
 
 
 
-if __name__ == '__main__' :
+# if __name__ == '__main__' :
 
 
-    ap=argparse.ArgumentParser()
-    ap.add_argument("-i","--input",default="0",help="input video file (0, filename, rtsp://admin:admin@192.168.1.71/1, ...")
-    ap.add_argument("-n","--number_people_max",default=-1,help="limit the number of people detected")
-    ap.add_argument("-f","--face",action="store_true", help="enable face keypoint detection")
-    ap.add_argument("--frt",type=float,default=0.4,help="face rendering threshold")
-    ap.add_argument("-o","--output",help="path to output video file")
-    ap.add_argument("-r", "--rendering",action="store_true",help="display in a separate window the original rendering made by Openpose lib")
-
-    args=ap.parse_args()
-
-    if args.input.isdigit():
-        args.input=int(args.input)
-        w_h_list = [(960,720), (640, 480), (320, 240)]
-        w_h_idx = 0
-
-    # Read video
-    video=cv2.VideoCapture(args.input)
-    if isinstance(args.input, int):
-        w,h = w_h_list[w_h_idx]
-        video.set(cv2.CAP_PROP_FRAME_WIDTH, w)
-        video.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
-
-    ok, frame = video.read()
-    h,w,_=frame.shape
-    if args.output:
-        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-        out=cv2.VideoWriter(args.output,fourcc,30,(w,h))
-
-    my_op = OP(openpose_rendering=args.rendering, number_people_max=args.number_people_max, min_size=60, face_detection=args.face, frt=args.frt)
-
-    fps = FPS()
-    while True:
-        # Read a new frame
-        ok, frame = video.read()
-        if not ok:
-            break
-        fps.update()
-        frame = frame.copy()
-        nb_persons,body_kps,face_kps = my_op.eval(frame)
-        #print(2)
-        my_op.draw_body(frame)
-        if args.face:
-            my_op.draw_face(frame)
-            my_op.draw_eyes(frame)
-
-
-
+    # ap=argparse.ArgumentParser()
+    # ap.add_argument("-i","--input",default="0",help="input video file (0, filename, rtsp://admin:admin@192.168.1.71/1, ...")
+    # ap.add_argument("-n","--number_people_max",default=-1,help="limit the number of people detected")
+    # ap.add_argument("-f","--face",action="store_true", help="enable face keypoint detection")
+    # ap.add_argument("--frt",type=float,default=0.4,help="face rendering threshold")
+    # ap.add_argument("-o","--output",help="path to output video file")
+    # ap.add_argument("-r", "--rendering",action="store_true",help="display in a separate window the original rendering made by Openpose lib")
+    #
+    # args=ap.parse_args()
+    #
+    #
+    # my_op = OP(openpose_rendering=args.rendering, number_people_max=args.number_people_max, min_size=60, face_detection=args.face, frt=args.frt)
+    #
+    #
+    # nb_persons,body_kps,face_kps = my_op.eval(frame)
 
 
 #----------------------------------------------------------------------#
@@ -643,17 +620,17 @@ if __name__ == '__main__' :
 # ------------------------------ Main ----------------------------------#
 def main():
 
-        dron = Tello()
-        dron.connect()
-        dron.for_back_velocity = 0
-        dron.left_right_velocity = 0
-        dron.up_down_velocity = 0
-        dron.yaw_velocity = 0
-        dron.speed = 0
-        print(dron.get_battery())
-        dron.streamoff()
-        dron.streamon()
-        # dron.takeoff()
+        # dron = Tello()
+        # dron.connect()
+        # dron.for_back_velocity = 0
+        # dron.left_right_velocity = 0
+        # dron.up_down_velocity = 0
+        # dron.yaw_velocity = 0
+        # dron.speed = 0
+        # print(dron.get_battery())
+        # dron.streamoff()
+        # dron.streamon()
+        # # dron.takeoff()
 
         params = set_params()
 
@@ -666,7 +643,7 @@ def main():
         # openpose = OpenPose(params)
 
         #Opening OpenCV stream
-        # stream = cv2.VideoCapture(0)
+        stream = cv2.VideoCapture(0)
 
         font = cv2.FONT_HERSHEY_SIMPLEX
         counter = -1
@@ -675,27 +652,36 @@ def main():
                 print('counter: ',counter)
                 # start_frame_number = 50
                 # stream.set(cv2.CAP_PROP_POS_FRAMES, start_frame_number)
-                # ret,img = stream.read()
-                # img = cv2.resize(img, (320, 240))
-                # if counter%100 == 0:
-                print('frame procesed:', counter)
-                leer_frame = dron.get_frame_read()
+                ret,img = stream.read()
                 print('imagen obtenida')
-                img = leer_frame.frame
-                print('Imagen extraida')
                 img = cv2.resize(img, (320, 240))
                 print('imagen rescalada')
+
+                #----Dron----#
+                # if counter%100 == 0:
+                # print('frame procesed:', counter)
+                # leer_frame = dron.get_frame_read()
+                # print('imagen obtenida')
+                # img = leer_frame.frame
+                # print('Imagen extraida')
+                # img = cv2.resize(img, (320, 240))
+                # print('imagen rescalada')
                 # cv2.imwrite('D:/Escritorio/Dron/DronTodo/images/openimage{}.jpg'.format(counter),img)
                 # Output keypoints and the image with the human skeleton blended on it
                 # keypoints, output_image = openpose.forward(img, True)
                 # Process Image
                 # img2 = cv2.imread('lena_caption.png', cv2.COLOR_BGR2RGB)
+                #----Fin Dron----#
                 datum = op.Datum()
                 # imageToProcess = cv2.imread('D:/Escritorio/Dron/DronTodo/images/openimage{}.jpg'.format(counter))
                 datum.cvInputData = img #imageToProcess
                 print('imagen preparada')
                 opWrapper.emplaceAndPop(op.VectorDatum([datum]))
                 print('imagen analizada')
+                object = OP(datumin=datum)
+                print(check_pose(object))
+                # print(object.get_body_kp("REye"))
+
 
                 # Print the human pose keypoints, i.e., a [#people x #keypoints x 3]-dimensional numpy object with the keypoints of all the people on that image
                 # if len(datum.poseKeypoints)>0:
@@ -723,7 +709,7 @@ def main():
                     #     os.remove(f)
                     break
 
-        # stream.release()
+        stream.release()
         # dron.land()
         cv2.destroyAllWindows()
 
