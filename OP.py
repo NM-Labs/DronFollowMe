@@ -15,9 +15,9 @@ from math import pi, atan2, degrees, sqrt
 
 
 class Params:
-    # def __init__(self,dir_path):
-	# 	self.dir_path=dir_path
-    def set_params(self, dir_path, face_detection=False, hand_detection=False):
+    def __init__(self,dir_path):
+            self.dir_path=dir_path
+    def set_params(self, face_detection=False, hand_detection=False):
 
             params = dict()
             params["logging_level"] = 3
