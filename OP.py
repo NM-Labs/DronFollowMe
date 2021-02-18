@@ -3,22 +3,21 @@ import cv2
 import os
 from sys import platform
 import glob
-from djitellopy import Tello
 import time
 import numpy as np
-from keras import backend as K
-from keras.models import model_from_json
+# from keras import backend as K
+# from keras.models import model_from_json
 import argparse
 from collections import namedtuple
-# from FPS import FPS
 from matplotlib import pyplot as plt
 import time
 from math import pi, atan2, degrees, sqrt
 
 
 class Params:
-    @staticmethod
-    def set_params(face_detection=False, hand_detection=False):
+    # def __init__(self,dir_path):
+	# 	self.dir_path=dir_path
+    def set_params(self, dir_path, face_detection=False, hand_detection=False):
 
             params = dict()
             params["logging_level"] = 3
@@ -33,7 +32,7 @@ class Params:
             params["num_gpu_start"] = 0
             params["disable_blending"] = False
             # Ensure you point to the correct path where models are located
-            params["model_folder"] = dir_path + "/../../../models/"
+            params["model_folder"] = self.dir_path + "/../../../models/"
 
             # if not self.openpose_rendering:
             #     params["render_pose"] = 0

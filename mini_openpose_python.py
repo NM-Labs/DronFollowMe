@@ -4,7 +4,7 @@ import os
 from sys import platform
 from djitellopy import Tello
 import time
-from OP import OP, Params
+from OP import Params
 
 #----------------------------------   Importando OpenPose   -----------------------------------------#
 dir_path = 'D:/Escritorio/Dron/openpose/build/examples/tutorial_api_python' # os.path.dirname(os.path.realpath(__file__))
