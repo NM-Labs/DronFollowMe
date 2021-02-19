@@ -24,55 +24,53 @@ except ImportError as e:
     print('Error: OpenPose library could not be found. Did you enable `BUILD_PYTHON` in CMake and have this Python script in the right folder?')
     raise e
 
+#----------------------------------------------------------------------#
+Drone = False
 # ------------------------------ Main ----------------------------------#
 def main():
 
-        # dron = Tello()
-        # dron.connect()
-        # dron.for_back_velocity = 0
-        # dron.left_right_velocity = 0
-        # dron.up_down_velocity = 0
-        # dron.yaw_velocity = 0
-        # dron.speed = 0
-        # print(dron.get_battery())
-        # dron.streamoff()
-        # dron.streamon()
-        # # dron.takeoff()
+        if Drone:
+            dron = Tello()
+            dron.connect()
+            dron.for_back_velocity = 0
+            dron.left_right_velocity = 0
+            dron.up_down_velocity = 0
+            dron.yaw_velocity = 0
+            dron.speed = 0
+            print(dron.get_battery())
+            dron.streamoff()
+            dron.streamon()
+            #dron.takeoff()
+        else:
+            stream = cv2.VideoCapture(0)
+            dron = None
 
         params = Params(dir_path).set_params()
         print(type(params))
+
+        movs = Movs(stream, dron, Drone)
+        movements = movs.get_movs()
+        print(type(movements))
 
         #Constructing OpenPose object allocates GPU memory
         opWrapper = op.WrapperPython()
         opWrapper.configure(params)
         opWrapper.start()
 
-        #Opening OpenCV stream
-        stream = cv2.VideoCapture(0)
-
-        Movs = Movs(stream, dron)
-        movements = Movs.get_movs()
-        print(type(movements))
-
         font = cv2.FONT_HERSHEY_SIMPLEX
         counter = -1
         while True:
                 counter += 1
                 print('frame procesed: ',counter)
-                ret,img = stream.read()
+                if Drone:
+                    leer_frame = dron.get_frame_read()
+                    img = leer_frame.frame
+                else:
+                    ret,img = stream.read()
+
                 print('imagen obtenida')
                 img = cv2.resize(img, (320, 240))
                 print('imagen rescalada')
-
-                #----Dron----#
-                # print('frame procesed: ', counter)
-                # leer_frame = dron.get_frame_read()
-                # print('imagen obtenida')
-                # img = leer_frame.frame
-                # print('Imagen extraida')
-                # img = cv2.resize(img, (320, 240))
-                # print('imagen rescalada')
-                #----Fin Dron----#
 
                 datum = op.Datum()
                 datum.cvInputData = img #imageToProcess
@@ -100,8 +98,12 @@ def main():
                 if key==ord('q'):
                     break
 
-        stream.release()
-        # dron.land()
+
+        if Drone:
+            dron.land()
+        else:
+            stream.release()
+
         cv2.destroyAllWindows()
 
 

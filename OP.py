@@ -13,6 +13,7 @@ from matplotlib import pyplot as plt
 import time
 from math import pi, atan2, degrees, sqrt
 from datetime import date
+from djitellopy import Tello
 
 
 class Params:
@@ -45,11 +46,13 @@ class Params:
             return params
 
 class Movs:
-    def __init__(self,stream, dron):
-            self.stream=stream
-            self.dron=dron
+    def __init__(self,stream, dron, Drone):
+            self.stream = stream
+            self.dron = dron
+            self.Drone = Drone
     def get_movs(self):
 
+        if self.Drone:
             movements = {
                 "RIGHT_ARM_UP_OPEN" : self.dron.move_right(20),
                 "RIGHT_ARM_UP_CLOSED" : self.take_picture(),
@@ -57,19 +60,37 @@ class Movs:
                 "CLOSE_HANDS_UP" : self.dron.move_back(20),
                 "LEFT_ARM_UP_CLOSED" : self.dron.land(),
                 "LEFT_ARM_UP_OPEN" : self.dron.move_left(20),
-                "LEFT_HAND_ON_RIGHT_EAR" : self.dron.flip_left(),
+                "LEFT_HAND_ON_RIGHT_EAR" : self.dron.flip_right(),
                 "HANDS_ON_NECK" : self.dron.move_forward(20)
                 }
-              return movements
+        else:
+            movements = {
+                "RIGHT_ARM_UP_OPEN" : print('move_right'),
+                "RIGHT_ARM_UP_CLOSED" : self.take_picture(),
+                "RIGHT_HAND_ON_LEFT_EAR": print('flip_left'),
+                "CLOSE_HANDS_UP" : print('move_back'),
+                "LEFT_ARM_UP_CLOSED" : print('land'),
+                "LEFT_ARM_UP_OPEN" : print('move_left'),
+                "LEFT_HAND_ON_RIGHT_EAR" : print('flip_right'),
+                "HANDS_ON_NECK" : print('move_forward')
+                }
+        return movements
+
     def take_picture(self):
-            for i in range(3):
+        print('Preparate tienes 3 segundos!')
+        time.sleep(3)
+        for i in range(3):
+            if self.Drone:
+                leer_frame = dron.get_frame_read()
+                img_taken = leer_frame.frame
+            else:
                 _,img_taken = self.stream.read()
-                today = date.today()
-                t = time.localtime()
-                d = today.strftime("%b-%d-%Y")
-                current_time = time.strftime("%H-%M-%S", t)
-                cv2.imwrite('Imgs/Image_at_D-{}_T-{}.jpg'.format(d,current_time),img_taken)
-            return "Images Saved!"
+            today = date.today()
+            t = time.localtime()
+            d = today.strftime("%b-%d-%Y")
+            current_time = time.strftime("%H-%M-%S", t)
+            cv2.imwrite('Imgs/Image_at_D-{}_T-{}_N-{}.jpg'.format(d,current_time,i),img_taken)
+        return "Images Saved!"
 
 
 
