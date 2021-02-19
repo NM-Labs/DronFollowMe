@@ -4,7 +4,8 @@ import os
 from sys import platform
 from djitellopy import Tello
 import time
-from OP import OP, Params
+from OP import OP, Params, Movs
+from datetime import date
 
 #----------------------------------   Importando OpenPose   -----------------------------------------#
 dir_path = 'D:/Escritorio/Dron/openpose/build/examples/tutorial_api_python' # os.path.dirname(os.path.realpath(__file__))
@@ -78,6 +79,10 @@ def main():
         #Opening OpenCV stream
         stream = cv2.VideoCapture(0)
 
+        Movs = Movs(stream, dron)
+        movements = Movs.get_movs()
+        print(type(movements))
+
         font = cv2.FONT_HERSHEY_SIMPLEX
         counter = -1
         while True:
@@ -104,9 +109,13 @@ def main():
                 opWrapper.emplaceAndPop(op.VectorDatum([datum]))
                 print('imagen analizada')
                 object = OP(datumin=datum)
-                print(object.check_pose())
+                pose = object.check_pose()
+                print(pose)
 
-
+                if pose:
+                    movements[pose]
+                else:
+                    print('No pose idetified!')
                 # Display the stream
                 cv2.putText(datum.cvOutputData,'OpenPose using Python-OpenCV',(20,30), font, 1,(255,255,255),1,cv2.LINE_AA)
 

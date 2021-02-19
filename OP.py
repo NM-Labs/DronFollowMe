@@ -12,6 +12,7 @@ from collections import namedtuple
 from matplotlib import pyplot as plt
 import time
 from math import pi, atan2, degrees, sqrt
+from datetime import date
 
 
 class Params:
@@ -42,6 +43,34 @@ class Params:
             if hand_detection:
                 params["hand"] = True
             return params
+
+class Movs:
+    def __init__(self,stream, dron):
+            self.stream=stream
+            self.dron=dron
+    def get_movs(self):
+
+            movements = {
+                "RIGHT_ARM_UP_OPEN" : self.dron.move_right(20),
+                "RIGHT_ARM_UP_CLOSED" : self.take_picture(),
+                "RIGHT_HAND_ON_LEFT_EAR": self.dron.flip_left(),
+                "CLOSE_HANDS_UP" : self.dron.move_back(20),
+                "LEFT_ARM_UP_CLOSED" : self.dron.land(),
+                "LEFT_ARM_UP_OPEN" : self.dron.move_left(20),
+                "LEFT_HAND_ON_RIGHT_EAR" : self.dron.flip_left(),
+                "HANDS_ON_NECK" : self.dron.move_forward(20)
+                }
+              return movements
+    def take_picture(self):
+            for i in range(3):
+                _,img_taken = self.stream.read()
+                today = date.today()
+                t = time.localtime()
+                d = today.strftime("%b-%d-%Y")
+                current_time = time.strftime("%H-%M-%S", t)
+                cv2.imwrite('Imgs/Image_at_D-{}_T-{}.jpg'.format(d,current_time),img_taken)
+            return "Images Saved!"
+
 
 
 class OP:
