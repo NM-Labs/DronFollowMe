@@ -24,35 +24,6 @@ except ImportError as e:
     print('Error: OpenPose library could not be found. Did you enable `BUILD_PYTHON` in CMake and have this Python script in the right folder?')
     raise e
 
-
-# ------------------------------ Funciones ----------------------------------#
-
-def arriba():
-    dron.move_up(40)
-    time.sleep(5)
-def abajo():
-    dron.move_down(40)
-    time.sleep(5)
-def izquierda():
-    dron.move_left(40)
-    time.sleep(5)
-def derecha():
-    dron.move_right(40)
-    time.sleep(5)
-def arriba_medio():
-    dron.move_up(20)
-    time.sleep(5)
-def abajo_medio():
-    dron.move_down(20)
-    time.sleep(5)
-def izquierda_medio():
-    dron.move_left(20)
-    time.sleep(5)
-def derecha_medio():
-    dron.move_right(20)
-    time.sleep(5)
-
-
 # ------------------------------ Main ----------------------------------#
 def main():
 
